@@ -71,7 +71,7 @@ func (i Inventory) DeleteUserById(id string) error {
 //TICKET
 
 func (i Inventory) AddTicket(ticket ticket.Ticket) error {
-	if _, err := i.db.Exec(`insert into ticket values ($1,$2,$3,$4),`, ticket.Id, ticket.From, ticket.To, ticket.DateOfFly); err != nil {
+	if _, err := i.db.Exec(`insert into ticket values ($1,$2,$3,$4)`, ticket.Id, ticket.From, ticket.To, ticket.DateOfFly); err != nil {
 		return err
 	}
 	return nil

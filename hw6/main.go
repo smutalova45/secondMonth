@@ -62,14 +62,15 @@ func main() {
 					var t ticket.Ticket
 					fmt.Println("------------------")
 					var idStr string
+					fmt.Print("ENTER | Id ticket :")
+
+					fmt.Scan(&idStr)
 
 					_, err := uuid.Parse(idStr)
 					if err != nil {
 						fmt.Println("Error parsing UUID:", err)
-					}
-					fmt.Print("ENTER | Id ticket :")
-					if _, err := fmt.Scan(&idStr); err != nil {
-						fmt.Println(err.Error())
+					} else {
+						t.Id = idStr
 					}
 
 					fmt.Print("ENTER | (which country) From : ")
@@ -196,7 +197,50 @@ func main() {
 
 				case adduser:
 					var u user.User
-					fmt.Print(u)
+
+					var idstr string
+					fmt.Print("enter id: ")
+					fmt.Scan(&idstr)
+					_, err := uuid.Parse(idstr)
+
+					if err != nil {
+						fmt.Println(err.Error())
+					} else {
+						u.Id = idstr
+					}
+					fmt.Println("enter firstname : ")
+					if _, err := fmt.Scan(&u.FirstName); err != nil {
+						fmt.Println(err.Error())
+					}
+
+					fmt.Println("enter last name : ")
+					if _, err = fmt.Scan(&u.LastName); err != nil {
+						fmt.Println(err.Error())
+					}
+					fmt.Println("enter email ")
+					if _, err = fmt.Scan(&u.Email); err != nil {
+						fmt.Println(err.Error())
+					}
+
+					fmt.Println("enter phone : ")
+					if _, err = fmt.Scan(&u.Phone); err != nil {
+						fmt.Println(err.Error())
+					}
+					fmt.Println("enter ticket id :")
+					var idticket string
+					fmt.Scan(&idticket)
+					_, err = uuid.Parse(idticket)
+					if err != nil {
+						fmt.Println(err.Error())
+					} else {
+						u.TicketId = idticket
+					}
+
+					err = inv.AddUser(u)
+					if err != nil {
+						fmt.Println(err.Error())
+					}
+
 				case getalluser:
 					users1, err := inv.GetAllUsers()
 					if err != nil {
@@ -219,40 +263,42 @@ func main() {
 						fmt.Println("user information : id :", idstr, "firstname : ", u1.FirstName, "lastname: ", u1.LastName, "email:", u1.Email, "ticket_id: ", u1.TicketId)
 					}
 				case updateuser:
-
-					// fmt.Println("enter id (uuid)")
-
-					// fmt.Scan(&id)
-
-					// _, err := uuid.Parse(id)
-					// if err != nil {
-					// 	fmt.Print(err.Error())
-					// }
-					// var date string
-					// fmt.Println("enter date (yyyy-mm-dd):")
-					// fmt.Scan(&date)
-					// dateof, err := time.Parse("2006-01-02", date)
-					// if err != nil {
-					// 	fmt.Println(err.Error())
-					// }
-					// t := ticket.Ticket{
-					// 	Id:        id,
-					// 	DateOfFly: dateof,
-					// }
-
-					// _, err = inv.UpdateTicket(t)
-					// if err != nil {
-					// 	fmt.Println(err.Error())
-					// }
-					// fmt.Println("updated")
+					var u user.User
 					fmt.Println("enter id (uuid)")
-					var id string
-					fmt.Scan(&id)
-					_, err := uuid.Parse(id)
+					var ids string
+					fmt.Scan(&ids)
+					_, err := uuid.Parse(ids)
 					if err != nil {
 						fmt.Println(err.Error())
 					}
-					
+					var email string
+					fmt.Print("enter new email (@.gmail.com) : ")
+					_, err = fmt.Scan(&email)
+					if err != nil {
+						fmt.Println(err.Error())
+					} else {
+						u.Email = email
+					}
+					var phone string
+					fmt.Print("enter new phone (+9989):")
+
+					_, err = fmt.Scan(&phone)
+					if err != nil {
+						fmt.Println(err.Error())
+					} else {
+						u.Phone = phone
+					}
+
+					us := user.User{
+						Id:    ids,
+						Email: email,
+						Phone: phone,
+					}
+					_, err = inv.UpdateUsers(us)
+					if err != nil {
+						fmt.Println(err.Error())
+					}
+					fmt.Println("updated")
 
 				case deleteuser:
 					var idstr string
@@ -290,12 +336,17 @@ func main() {
 			var to string
 			fmt.Scan(&to)
 
-			user, ticket, err := inv.Report(from, to)
+			ticket, user, err := inv.Report(from, to)
 			if err != nil {
 				fmt.Println(err.Error())
+			} else {
+				for i, user := range user {
+					fmt.Printf("User %d: %s %s, Email: %s, Phone: %s\n", i+1, user.FirstName, user.LastName, user.Email, user.Phone)
+				}
+				for i, t := range ticket {
+					fmt.Printf("Ticket %d: From %s to %s, Date: %s\n", i+1, t.From, t.To, t.DateOfFly.Format("2006-01-02"))
+				}
 			}
-			fmt.Println(user)
-			fmt.Println(ticket)
 
 		case finish:
 			return

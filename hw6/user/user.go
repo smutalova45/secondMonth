@@ -1,14 +1,10 @@
 package user
 
-import (
-	"github.com/google/uuid"
-)
-
 type User struct {
-	Id        uuid.UUID
+	Id        string
 	FirstName string
 	LastName  string
 	Email     string
-	TicketId  uuid.UUID
+	TicketId  string
 	Phone     string
 }
