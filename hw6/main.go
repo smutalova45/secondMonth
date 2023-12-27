@@ -252,11 +252,12 @@ func main() {
 					var idstr string
 					fmt.Print("enter id: *in uuid: ")
 					fmt.Scan(&idstr)
-					idt, err := uuid.Parse(idstr)
+					_, err := uuid.Parse(idstr)
 					if err != nil {
 						fmt.Println(err.Error())
 					}
-					u1, err := inv.GetUserById(idt)
+					u1, err := inv.GetUserById(idstr)
+
 					if err != nil {
 						fmt.Println(err.Error())
 					} else {
@@ -339,7 +340,7 @@ func main() {
 			ticket, user, err := inv.Report(from, to)
 			if err != nil {
 				fmt.Println(err.Error())
-			} else {
+			} else {  ///YENGI STRUKTURA
 				for i, user := range user {
 					fmt.Printf("User %d: %s %s, Email: %s, Phone: %s\n", i+1, user.FirstName, user.LastName, user.Email, user.Phone)
 				}

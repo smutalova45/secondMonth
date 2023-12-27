@@ -21,6 +21,7 @@ func New(db *sql.DB) Inventory {
 //USER
 
 func (i Inventory) AddUser(user user.User) error {
+	user.Id = uuid.New().String()
 
 	if _, err := i.db.Exec(`insert into users values($1,$2,$3,$4,$5,$6)`, user.Id, user.FirstName, user.LastName, user.Email, user.TicketId, user.Phone); err != nil {
 		return err
@@ -43,7 +44,7 @@ func (i Inventory) GetAllUsers() ([]user.User, error) {
 	return us, nil
 
 }
-func (i Inventory) GetUserById(id uuid.UUID) (user.User, error) {
+func (i Inventory) GetUserById(id string) (user.User, error) {
 	user := user.User{}
 	row := i.db.QueryRow(`select id,firstname,lastname,email , ticket_id , phone from users where id=$1`, id)
 	if err := row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.TicketId, &user.Phone); err != nil {
@@ -71,13 +72,13 @@ func (i Inventory) DeleteUserById(id string) error {
 //TICKET
 
 func (i Inventory) AddTicket(ticket ticket.Ticket) error {
-	if _, err := i.db.Exec(`insert into ticket values ($1,$2,$3,$4)`, ticket.Id, ticket.From, ticket.To, ticket.DateOfFly); err != nil {
+	if _, err := i.db.Exec(`insert into ticket values ($1, $2, $3, $4)`, ticket.Id, ticket.From, ticket.To, ticket.DateOfFly); err != nil {
 		return err
 	}
 	return nil
 }
 func (i Inventory) GetAllTickets() ([]ticket.Ticket, error) {
-	rows, err := i.db.Query(`select *from ticket `)
+	rows, err := i.db.Query(`select * from ticket `)
 	if err != nil {
 		return nil, err
 	}
@@ -156,3 +157,4 @@ func (i Inventory) Report(from string, to string) ([]ticket.Ticket, []user.User,
 	return tickets, users, nil
 
 }
+
