@@ -14,3 +14,4 @@ CREATE TABLE users(
     ticket_id uuid references ticket(id),
     phone varchar(14)
 );
+
